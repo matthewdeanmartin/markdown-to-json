@@ -1,8 +1,9 @@
-from markdown_to_json.scripts.md_to_json import jsonify_markdown
-from unittest.mock import patch
 import json
+from unittest.mock import patch
+
 import pytest
 
+from markdown_to_json.scripts.md_to_json import jsonify_markdown
 
 # Sample data for testing
 VALID_MARKDOWN = "This is a **markdown** document."
