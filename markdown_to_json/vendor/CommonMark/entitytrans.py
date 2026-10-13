@@ -2426,7 +2426,7 @@ def _replace_charref(s):
         if num in _invalid_charrefs:
             return _invalid_charrefs[num]
         if 0xD800 <= num <= 0xDFFF or num > 0x10FFFF:
-            return "\uFFFD"
+            return "\ufffd"
         if num in _invalid_codepoints:
             return ""
         if sys.version_info >= (3, 0):

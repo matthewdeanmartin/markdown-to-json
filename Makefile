@@ -26,65 +26,52 @@ clean: clean-pyc clean-test
 
 # tests can't be expected to pass if dependencies aren't installed.
 # tests are often slow and linting is fast, so run tests on linted code.
-test: clean .build_history/pylint .build_history/bandit
+test: clean pylint bandit
 	@echo "Running unit tests"
 	# $(VENV) pytest markdown-to-json --doctest-modules
 	# $(VENV) python -m unittest discover
 	$(VENV) py.test tests --cov-config=.coveragerc --cov=markdown_to_json --cov-report=html --cov-fail-under 88
 
-.build_history:
-	@mkdir -p .build_history
 
-.build_history/isort: .build_history $(FILES)
+isort:
 	@echo "Formatting imports"
 	$(VENV) isort markdown_to_json
-	@touch .build_history/isort
 
 .PHONY: isort
-isort: .build_history/isort
 
-.build_history/black: .build_history .build_history/isort $(FILES)
+black: isort
 	@echo "Formatting code"
 	$(VENV) black . --exclude .virtualenv --exclude .tox
-	@touch .build_history/black
 
 .PHONY: black
-black: .build_history/black
 
-.build_history/pre-commit: .build_history .build_history/isort .build_history/black
+pre-commit: isort black
 	@echo "Pre-commit checks"
 	$(VENV) pre-commit run --all-files
-	@touch .build_history/pre-commit
 
 .PHONY: pre-commit
-pre-commit: .build_history/pre-commit
 
-.build_history/bandit: .build_history $(FILES)
+bandit:
 	@echo "Security checks"
 	$(VENV)  bandit .
-	@touch .build_history/bandit
 
 .PHONY: bandit
-bandit: .build_history/bandit
 
 .PHONY: pylint
-.build_history/pylint: .build_history .build_history/isort .build_history/black $(FILES)
+pylint: isort black
 	@echo "Linting with pylint"
 	# TODO lint tests
 	$(VENV) pylint markdown_to_json --fail-under 9
-	@touch .build_history/pylint
 
 .PHONY: ruff
-.build_history/ruff: .build_history .build_history/isort .build_history/black $(FILES)
+ruff: isort black
 	@echo "Linting with ruff"
 	$(VENV) ruff markdown_to_json tests
-	@touch .build_history/ruff
 
 .PHONY: ruff
-ruff: .build_history/ruff
 
 # for when using -j (jobs, run in parallel)
-.NOTPARALLEL: .build_history/isort .build_history/black
+.NOTPARALLEL: isort black
 
 check: test pylint ruff bandit pre-commit
 

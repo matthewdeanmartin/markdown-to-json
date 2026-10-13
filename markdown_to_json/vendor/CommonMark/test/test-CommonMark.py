@@ -80,7 +80,7 @@ example_number = 0
 current_section = ""
 tabChar = "\u2192"
 spaceChar = "\u2423"
-nbspChar = "\u00A0"
+nbspChar = "\u00a0"
 
 
 def showSpaces(t):
